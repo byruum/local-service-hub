@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Local Service Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+    }
+    header {
+      background: #111;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .container {
+      padding: 15px;
+    }
+    .card {
+      background: white;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .active {
+      color: green;
+      font-weight: bold;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 15px;
+      background: #25D366;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+    footer {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      padding: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h2>Local Service Hub</h2>
+  <p>Professional Adult Companionship & Lifestyle Services (18+)</p>
+</header>
+
+<div class="container" id="providers">
+  Loading providers...
+</div>
+
+<footer>
+  © 2026 Local Service Hub · Adults Only (18+)
+</footer>
+
+<script>
+  // 🔐 FIREBASE CONFIG — REPLACE WITH YOUR OWN
+  const firebaseConfig = {
+    apiKey: "PASTE_YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const providersDiv = document.getElementById("providers");
+
+  db.collection("providers")
+    .where("active", "==", true)
+    .get()
+    .then(snapshot => {
+      providersDiv.innerHTML = "";
+      if (snapshot.empty) {
+        providersDiv.innerHTML = "No providers available.";
+      }
+      snapshot.forEach(doc => {
+        const p = doc.data();
+        providersDiv.innerHTML += `
+          <div class="card">
+            <h3>${p.name}</h3>
+            <p class="active">● Live on platform</p>
+            <p>${p.category || ""}</p>
+            <a class="btn" href="https://wa.me/${p.whatsapp}" target="_blank">
+              Contact on WhatsApp
+            </a>
+          </div>
+        `;
+      });
+    });
+</script>
+
+</body>
+</html>
